@@ -1080,17 +1080,18 @@
 }
 
 .pw-refine-btn-vertical {
-    align-self: stretch !important; /* Ép nút kéo dài bằng chiều cao của thanh công cụ */
-    height: auto !important; 
-    flex-shrink: 0 !important;
-    display: flex !important;
-    align-items: center !important; /* Căn giữa icon và chữ theo chiều dọc */
-    justify-content: center !important;
-    padding: 0 15px !important;
-    border-radius: 0 6px 6px 0 !important; /* Bo góc phải */
+    width: auto !important;
+    min-width: 120px !important; /* Tăng từ 80px lên 120px để chữ không bị tràn */
+    padding: 0 20px !important;  /* Thêm không gian hai bên cho chữ */
+    flex-direction: row !important;
     writing-mode: horizontal-tb !important;
-    transform: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: auto !important;
+    flex-shrink: 0 !important;
     margin: 0 !important;
+    border-radius: 0 6px 6px 0 !important;
 }
 
 .pw-refine-btn-text {
