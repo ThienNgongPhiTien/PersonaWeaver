@@ -365,7 +365,7 @@
 .pw-refine-btn-vertical { 
     background: var(--cozy-orange); color: var(--cozy-text); 
     border: 2px solid #c49b43; border-radius: 8px; 
-    margin: 4px; box-shadow: 0 2px 0 #c49b43; width: 36px; 
+    margin: 4px; box-shadow: 0 2px 0 #c49b43; width: 52px; 
 }
 .pw-refine-btn-vertical:active { transform: translateY(2px); box-shadow: none; }
 
