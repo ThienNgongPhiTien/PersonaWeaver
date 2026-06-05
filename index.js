@@ -1083,6 +1083,16 @@ async function runGeneration(data, apiConfig, isTemplateMode = false) {
 
     // Lệnh nhiều vai trò NPC đã được bao gồm trong defaultNpcGenPrompt, không cần tiêm trong lúc chạy
 
+  // --- ĐOẠN CODE CẦN THÊM ĐỂ BƠM DỮ LIỆU WIKI CHO AI ---
+    if (wikiDataCache && wikiDataCache.plainText) {
+        const wikiRef = wrapAsXiTaReference(
+            wikiDataCache.plainText,
+            `Wiki Reference: ${wikiDataCache.title} (${wikiDataCache.domain || 'Wiki'})`
+        );
+        userMessageContent = userMessageContent + '\n\n' + wikiRef;
+    }
+    // ------------------------------------------------------
+
     const updateDebugView = (messages) => {
         let debugText = `=== Thời gian gửi: ${new Date().toLocaleTimeString()} ===\n`;
         const modeStr = isNpcMode ? 'NPC' : 'User';
