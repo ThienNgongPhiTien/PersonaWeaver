@@ -1068,3 +1068,21 @@
     .pw-avatar-add-btn { width: 28px; height: 28px; }
     .pw-context-row { padding: 6px 8px; font-size: 0.9em; }
 }
+
+/* Tấn công trực diện vào nút Tinh chỉnh */
+.pw-refine-btn-vertical {
+    display: flex !important;
+    flex-direction: row !important; /* Ép nằm ngang */
+    width: auto !important;
+    min-width: 100px !important; /* Đảm bảo đủ rộng */
+    writing-mode: horizontal-tb !important; /* Ép văn bản nằm ngang */
+    height: 40px !important; /* Cố định chiều cao */
+    padding: 0 15px !important;
+}
+
+.pw-refine-btn-text {
+    writing-mode: horizontal-tb !important; /* Ép văn bản nằm ngang */
+    display: block !important;
+    white-space: nowrap !important;
+    transform: none !important;
+}
