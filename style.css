@@ -310,7 +310,12 @@
 .pw-refine-input { flex: 1; border: none; background: transparent; padding: 10px; font-size: 0.95em; color: var(--pw-text-main); resize: none; overflow-y: auto; min-height: 56px; max-height: 56px; line-height: 1.5; }
 .pw-refine-btn-vertical { width: 44px; cursor: pointer; background: var(--SmartThemeQuoteColor, #83c168); border-left: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; color: #fff; font-weight: bold; transition: all 0.2s; flex-shrink: 0; }
 .pw-refine-btn-vertical:hover { filter: brightness(1.1); }
-.pw-refine-btn-text { writing-mode: vertical-rl; text-orientation: upright; letter-spacing: 2px; }
+.pw-refine-btn-text { 
+    writing-mode: vertical-rl; 
+    white-space: nowrap; 
+    letter-spacing: 1px; 
+    transform: rotate(180deg); 
+}
 .pw-float-quote-btn { position: fixed; top: 40%; right: 0; background: var(--pw-paper-bg); color: var(--pw-text-main); padding: 8px 12px; border-radius: 20px 0 0 20px; font-weight: bold; font-size: 0.85em; box-shadow: -2px 2px 8px rgba(0,0,0,0.4); cursor: pointer; z-index: 9999; display: none; align-items: center; gap: 4px; border: 1px solid var(--pw-border); border-right: none; backdrop-filter: blur(5px); }
 
 /* Load Overlay (Theme-Adaptive) */
