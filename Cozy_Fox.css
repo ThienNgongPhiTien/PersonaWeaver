@@ -750,3 +750,14 @@
     .pw-mode-item { padding: 5px 14px; font-size: 0.85em; }
     .pw-section-label { font-size: 1em; }
 }
+    /* Fix lỗi dãn nút Tinh chỉnh thành nằm ngang */
+.pw-refine-btn-vertical {
+    width: auto !important; 
+    padding: 0 16px !important;
+    flex-direction: row !important; /* Để icon và chữ nằm ngang nhau */
+}
+
+.pw-refine-btn-text {
+    white-space: nowrap !important; /* Cấm bẻ dòng */
+    writing-mode: horizontal-tb !important;
+}
