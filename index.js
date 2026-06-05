@@ -2134,7 +2134,7 @@ async function openCreatorPopup() {
             <div class="pw-wiki-fetch-section" style="margin-bottom: 8px; padding: 10px; background: rgba(88,101,242,0.05); border: 1px dashed rgba(88,101,242,0.3); border-radius: 6px;">
     <div style="font-size: 0.85em; opacity: 0.8; margin-bottom: 5px;"><i class="fa-solid fa-book-journal-whills"></i> <b>Nguồn tư liệu Wiki (Không bắt buộc)</b></div>
     <div style="display: flex; gap: 8px; width: 100%;">
-        <input type="text" id="pw-generic-wiki-input" class="pw-input" placeholder="Dán link bài Wiki (VD: wiki.summertimesaga.com/Jenny)..." style="flex: 1; font-size: 0.85em;">
+        <input type="text" id="pw-generic-wiki-input" class="pw-input" placeholder="Dán link bài Wiki (VD: https://typemoon.fandom.com/wiki/Shirou_Emiya)..." style="flex: 1; font-size: 0.85em;">
         <button id="pw-generic-wiki-fetch-btn" class="pw-btn primary" style="width: auto; padding: 0 15px; font-size: 0.85em;"><i class="fa-solid fa-cloud-arrow-down"></i> Tải dữ liệu</button>
     </div>
     <div id="pw-wiki-status" style="display:none; font-size:0.8em; margin-top:6px; padding:6px; border-radius:4px;"></div>
