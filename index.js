@@ -449,53 +449,46 @@ function stripWikitext(text) {
     return (doc.body?.textContent || "").replace(/\n{3,}/g, '\n\n').trim();
 }
 
-// Hàm gọi API của Fandom để tải nội dung trang
-async function fetchFandomWikiContent(wikiUrl) {
-    const match = wikiUrl.match(/https?:\/\/([a-z0-9\-]+)\.fandom\.com\/(?:[a-z\-]+\/)?wiki\/([^?#\s]+)/i);
-    if (!match) return null;
+// Hàm gọi API Đa năng cho mọi trang MediaWiki (Fandom, SummertimeSaga, v.v.)
+async function fetchMediaWikiContent(wikiUrl) {
+    try {
+        const urlObj = new URL(wikiUrl);
+        const pathSegments = urlObj.pathname.split('/').filter(Boolean);
+        
+        let rawTitle = decodeURIComponent(pathSegments.pop() || '').replace(/_/g, ' ');
+        if (!rawTitle) throw new Error("Không tìm thấy tên bài viết trong link");
 
-    const subdomain = match[1];
-    const rawTitle = decodeURIComponent(match[2].replace(/_/g, ' '));
-    const apiUrl = `https://${subdomain}.fandom.com/api.php?action=query&prop=revisions&titles=${encodeURIComponent(rawTitle)}&rvslots=main&rvprop=content&format=json&origin=*`;
+        const origin = urlObj.origin;
+        const apiPathsToTry = ['/api.php', '/w/api.php', '/wiki/api.php', '/mediawiki/api.php'];
+        let data = null;
 
-    const res = await fetch(apiUrl);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+        for (const path of apiPathsToTry) {
+            const testApiUrl = `${origin}${path}?action=query&prop=revisions&titles=${encodeURIComponent(rawTitle)}&rvslots=main&rvprop=content&format=json&origin=*`;
+            try {
+                const res = await fetch(testApiUrl);
+                if (res.ok) {
+                    const testData = await res.json();
+                    if (testData?.query?.pages) {
+                        const page = Object.values(testData.query.pages)[0];
+                        if (page.missing === undefined) { data = testData; break; }
+                    }
+                }
+            } catch (e) {}
+        }
 
-    const pages = data?.query?.pages;
-    if (!pages) throw new Error("Phản hồi API không hợp lệ");
+        if (!data) throw new Error(`Trang Wiki này chặn API hoặc bài viết "${rawTitle}" không tồn tại.`);
 
-    const page = Object.values(pages)[0];
-    if (page.missing !== undefined) throw new Error(`Trang "${rawTitle}" không tồn tại trên wiki này`);
+        const page = Object.values(data.query.pages)[0];
+        const wikitext = page.revisions?.[0]?.slots?.main?.['*'] || page.revisions?.[0]?.['*'] || '';
+        const plainText = stripWikitext(wikitext); 
 
-    const wikitext = page.revisions?.[0]?.slots?.main?.['*'] || page.revisions?.[0]?.['*'] || '';
-    const plainText = stripWikitext(wikitext);
-
-    return {
-        title: page.title,
-        subdomain,
-        plainText,
-        charCount: plainText.length
-    };
-}
-
-// Hàm hiển thị thanh thông báo khi phát hiện link Fandom
-function showWikiFetchBar(url) {
-    const $bar = $('#pw-wiki-fetch-bar');
-    const $btn = $('#pw-wiki-fetch-btn');
-    const currentUrl = $('#pw-wiki-url-label').data('url');
-    const barIsVisible = $bar.is(':visible');
-
-    if (url !== currentUrl) {
-        wikiDataCache = null;
-        $('#pw-wiki-status').hide();
-        $btn.prop('disabled', false).html('<i class="fa-solid fa-download"></i> Tải nội dung Wiki');
-    } else if (!barIsVisible) {
-        $btn.prop('disabled', false).html('<i class="fa-solid fa-download"></i> Tải nội dung Wiki');
-    }
-
-    $('#pw-wiki-url-label').text(url).data('url', url);
-    $bar.css('display', 'flex');
+        return {
+            title: page.title,
+            domain: urlObj.hostname,
+            plainText: plainText,
+            charCount: plainText.length
+        };
+    } catch (e) { throw e; }
 }
 
 function getCharacterInfoText() {
@@ -2138,14 +2131,15 @@ async function openCreatorPopup() {
                 </span>
             </div>
 
-            <textarea id="pw-request" class="pw-textarea pw-auto-height" placeholder="Nhập yêu cầu tại đây, hoặc nhấp vào khối mẫu ở trên để chèn cấu trúc tham khảo (không cần điền tất cả)...">${activeData.request}</textarea>
-            <div id="pw-wiki-fetch-bar" style="display:none; margin-top:6px; padding:8px 10px; background:rgba(88,101,242,0.12); border:1px solid rgba(88,101,242,0.35); border-radius:6px; font-size:0.85em; align-items:center; gap:8px; flex-wrap:wrap;">
-    <i class="fa-solid fa-globe" style="color:#7289da;"></i>
-    <span id="pw-wiki-url-label" style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></span>
-    <button id="pw-wiki-fetch-btn" class="pw-mini-btn" style="white-space:nowrap;"><i class="fa-solid fa-download"></i> Tải nội dung Wiki</button>
-    <button id="pw-wiki-dismiss-btn" class="pw-mini-btn" style="background:transparent; opacity:0.5;" title="Bỏ qua"><i class="fa-solid fa-times"></i></button>
+            <div class="pw-wiki-fetch-section" style="margin-bottom: 8px; padding: 10px; background: rgba(88,101,242,0.05); border: 1px dashed rgba(88,101,242,0.3); border-radius: 6px;">
+    <div style="font-size: 0.85em; opacity: 0.8; margin-bottom: 5px;"><i class="fa-solid fa-book-journal-whills"></i> <b>Nguồn tư liệu Wiki (Không bắt buộc)</b></div>
+    <div style="display: flex; gap: 8px; width: 100%;">
+        <input type="text" id="pw-generic-wiki-input" class="pw-input" placeholder="Dán link bài Wiki (VD: wiki.summertimesaga.com/Jenny)..." style="flex: 1; font-size: 0.85em;">
+        <button id="pw-generic-wiki-fetch-btn" class="pw-btn primary" style="width: auto; padding: 0 15px; font-size: 0.85em;"><i class="fa-solid fa-cloud-arrow-down"></i> Tải dữ liệu</button>
+    </div>
+    <div id="pw-wiki-status" style="display:none; font-size:0.8em; margin-top:6px; padding:6px; border-radius:4px;"></div>
 </div>
-<div id="pw-wiki-status" style="display:none; font-size:0.8em; margin-top:4px; padding:4px 8px; border-radius:4px;"></div>
+            <textarea id="pw-request" class="pw-textarea pw-auto-height" placeholder="Nhập yêu cầu tại đây, hoặc nhấp vào khối mẫu ở trên để chèn cấu trúc tham khảo (không cần điền tất cả)...">${activeData.request}</textarea>
             <button id="pw-btn-gen" class="pw-btn gen"><i class="fa-solid ${chatHistEnabled ? 'fa-comments' : 'fa-wand-magic-sparkles'}"></i> ${chatHistEnabled ? 'Tạo dựa trên suy luận trò chuyện' : (isNpc ? 'Tạo thiết lập NPC' : 'Tạo thiết lập User')}</button>
 
             <div id="pw-result-area" style="display:${activeData.hasResult ? 'block' : 'none'}; margin-top:15px;">
@@ -4307,70 +4301,42 @@ function bindEvents() {
     $(document).on('click.pw', '#pw-history-search-clear', function () { $('#pw-history-search').val('').trigger('input'); });
     $(document).on('click.pw', '#pw-history-clear-all', function () { if (confirm("Xóa trống?")) { historyCache = []; saveData(); renderHistoryList(); } });
     // --- Fandom Wiki Detection ---
-    const FANDOM_URL_REGEX = /https?:\/\/[a-z0-9\-]+\.fandom\.com\/(?:[a-z\-]+\/)?wiki\/[^\s]+/i;
-const TRAILING_PUNCT_REGEX = /[.,;:!?'")\]}>]+$/;
+    // --- Tính năng tải Wiki Đa năng ---
+$(document).on('click.pw', '#pw-generic-wiki-fetch-btn', async function(e) {
+    e.preventDefault();
+    const url = $('#pw-generic-wiki-input').val().trim();
+    if (!url) return toastr.warning("Vui lòng dán link Wiki vào ô trống!");
 
-// Bắt sự kiện khi người dùng dán link vào ô Request
-$(document).on('paste.pw', '#pw-request', function(e) {
-    const pastedText = (e.originalEvent.clipboardData || window.clipboardData).getData('text');
-    if (!pastedText) return;
-    const match = pastedText.match(FANDOM_URL_REGEX);
-    if (match) {
-        const detectedUrl = match[0].replace(TRAILING_PUNCT_REGEX, '');
-        setTimeout(() => showWikiFetchBar(detectedUrl), 50);
-    }
-});
-
-// Bắt sự kiện khi người dùng gõ link vào ô Request
-$(document).on('input.pw', '#pw-request', function() {
-    const text = $(this).val();
-    const match = text.match(FANDOM_URL_REGEX);
-    if (match) {
-        const detectedUrl = match[0].replace(TRAILING_PUNCT_REGEX, '');
-        showWikiFetchBar(detectedUrl);
-    } else {
-        $('#pw-wiki-fetch-bar').hide();
-    }
-});
-
-// Sự kiện click nút Tải nội dung Wiki
-$(document).on('click.pw', '#pw-wiki-fetch-btn', async function() {
-    const url = $('#pw-wiki-url-label').data('url');
-    if (!url) return;
     const $btn = $(this);
     const $status = $('#pw-wiki-status');
+    
     $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang tải...');
     $status.hide();
+
     try {
-        const result = await fetchFandomWikiContent(url);
-        if (!result) throw new Error("URL Fandom không hợp lệ");
+        const result = await fetchMediaWikiContent(url);
         wikiDataCache = result;
         
         $status
-            .text(`✅ Đã tải thành công toàn bộ: "${result.title}" (${result.charCount.toLocaleString()} ký tự).`)
+            .html(`✅ Đã tải thành công: <b>${result.title}</b> từ ${result.domain} (${result.charCount.toLocaleString()} ký tự). Dữ liệu này sẽ tự động được gửi kèm cho AI.`)
             .css({ 'display': 'block', 'color': '#4caf50', 'background': 'rgba(76,175,80,0.1)', 'border': '1px solid rgba(76,175,80,0.3)' });
 
-        const currentReq = $('#pw-request').val();
-        const cleaned = currentReq.replace(FANDOM_URL_REGEX, '').trim();
-        const wikiRef = `[Wiki: ${result.title}]`;
-        $('#pw-request').val(cleaned ? `${wikiRef}\n${cleaned}` : wikiRef).trigger('input');
-
-        toastr.success(`Đã tải xong wiki: "${result.title}"`);
+        toastr.success(`Đã lấy dữ liệu nhân vật: "${result.title}"`);
         $btn.html('<i class="fa-solid fa-check"></i> Đã tải');
     } catch(e) {
         $status
             .text(`❌ Lỗi: ${e.message}`)
             .css({ 'display': 'block', 'color': '#f44336', 'background': 'rgba(244,67,54,0.1)', 'border': '1px solid rgba(244,67,54,0.3)' });
-        $btn.prop('disabled', false).html('<i class="fa-solid fa-download"></i> Tải nội dung Wiki');
-        toastr.error('Tải thất bại: ' + e.message);
+        $btn.prop('disabled', false).html('<i class="fa-solid fa-cloud-arrow-down"></i> Tải dữ liệu');
+        toastr.error('Tải Wiki thất bại: ' + e.message);
     }
 });
 
-// Sự kiện bỏ qua thanh Wiki
-$(document).on('click.pw', '#pw-wiki-dismiss-btn', function() {
-    $('#pw-wiki-fetch-bar').hide();
+// Làm mới trạng thái nút bấm khi thay đổi link
+$(document).on('input.pw', '#pw-generic-wiki-input', function() {
+    $('#pw-generic-wiki-fetch-btn').prop('disabled', false).html('<i class="fa-solid fa-cloud-arrow-down"></i> Tải dữ liệu');
     $('#pw-wiki-status').hide();
-    wikiDataCache = null;
+    wikiDataCache = null; 
 });
 }
 
