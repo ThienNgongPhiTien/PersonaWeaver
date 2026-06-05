@@ -1069,19 +1069,34 @@
     .pw-context-row { padding: 6px 8px; font-size: 0.9em; }
 }
 
-/* Tấn công trực diện vào nút Tinh chỉnh */
-.pw-refine-btn-vertical {
+/* Ép buộc thanh công cụ và nút kéo dài hết cỡ theo chiều dọc */
+.pw-refine-toolbar {
     display: flex !important;
-    flex-direction: row !important; /* Ép nằm ngang */
+    flex-direction: row !important;
+    align-items: stretch !important; /* Ép mọi thứ trong thanh công cụ phải cao bằng nhau */
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Nới rộng nút để chứa vừa chữ */
+.pw-refine-btn-vertical {
     width: auto !important;
-    min-width: 100px !important; /* Đảm bảo đủ rộng */
-    writing-mode: horizontal-tb !important; /* Ép văn bản nằm ngang */
-    height: 40px !important; /* Cố định chiều cao */
-    padding: 0 15px !important;
+    min-width: 120px !important; /* Tăng từ 80px lên 120px để chữ không bị tràn */
+    padding: 0 20px !important;  /* Thêm không gian hai bên cho chữ */
+    flex-direction: row !important;
+    writing-mode: horizontal-tb !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: auto !important;
+    flex-shrink: 0 !important;
+    margin: 0 !important;
+    border-radius: 0 6px 6px 0 !important;
 }
 
 .pw-refine-btn-text {
-    writing-mode: horizontal-tb !important; /* Ép văn bản nằm ngang */
+    writing-mode: horizontal-tb !important;
     display: block !important;
     white-space: nowrap !important;
     transform: none !important;
