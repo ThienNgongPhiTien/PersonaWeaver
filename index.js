@@ -33,10 +33,10 @@ const defaultYamlTemplate =
   Thân phận:
 
 Tiểu sử:
-  Tuổi_thơ_0_12_tuổi: 
-  Thiếu_niên_13_18_tuổi: 
-  Thanh_niên_19_35_tuổi: 
-  Trung_niên_35_đến_nay: 
+  Tuổi thơ 0 12 tuổi: 
+  Thiếu niên 13 18 tuổi: 
+  Thanh niên 19 35 tuổi: 
+  Trung niên 35 đến nay: 
   Hiện trạng: 
 
 Bối cảnh gia đình:
@@ -474,7 +474,7 @@ function escapeRegexPW(s) { return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$
 
 function applyTagFilters(text, includeTags, excludeTags) {
     let result = String(text || "");
-    result = result.replace(//g, '');
+    result = result.replace(/<!--[\s\S]*?-->/g, '');
 
     if (excludeTags && excludeTags.length > 0) {
         excludeTags.forEach(tag => {
@@ -546,7 +546,7 @@ async function fetchChatHistoryFiltered(opts = {}) {
         const floorId = msg.message_id ?? '?';
         let content = msg.message || '';
         if (msg.is_user) {
-            content = content.replace(//g, '').replace(/<[^>]*>/g, '');
+            content = content.replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]*>/g, '');
         } else {
             content = applyTagFilters(content, includeTags, excludeTags);
         }
@@ -982,8 +982,7 @@ async function runGeneration(data, apiConfig, isTemplateMode = false) {
             userMessageContent += '\n\n' + reqBlock;
         }
 
-        prefillContent = "
-```yaml\n";
+        prefillContent = "```yaml\n";
     } else if (chatInferEnabled) {
         const targetName = isNpcMode ? charName : currentName;
         const existingBlock = (currentText && currentText.trim().length > 20)
@@ -1277,8 +1276,7 @@ async function runGeneration(data, apiConfig, isTemplateMode = false) {
     } else {
         if (prefillContent && !responseContent.startsWith(prefillContent) && !responseContent.startsWith("```yaml")) {
             const trimRes = responseContent.trim();
-            if (!trimRes.startsWith("
-```yaml") && (trimRes.startsWith("Tên") || trimRes.startsWith("  Tên") || trimRes.startsWith("Thông tin cơ bản"))) {
+            if (!trimRes.startsWith("```yaml") && (trimRes.startsWith("Tên") || trimRes.startsWith("  Tên") || trimRes.startsWith("Thông tin cơ bản"))) {
                  responseContent = prefillContent + responseContent;
             }
         }
