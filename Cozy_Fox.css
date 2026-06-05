@@ -750,14 +750,27 @@
     .pw-mode-item { padding: 5px 14px; font-size: 0.85em; }
     .pw-section-label { font-size: 1em; }
 }
-    /* Fix lỗi dãn nút Tinh chỉnh thành nằm ngang */
-.pw-refine-btn-vertical {
-    width: auto !important; 
-    padding: 0 16px !important;
-    flex-direction: row !important; /* Để icon và chữ nằm ngang nhau */
+    /* Ép buộc nút Tinh chỉnh nằm ngang và không dãn khung */
+.pw-refine-toolbar .pw-refine-btn-vertical {
+    width: auto !important;
+    min-width: 80px !important; /* Đủ rộng cho chữ Tinh chỉnh */
+    flex-direction: row !important;
+    writing-mode: horizontal-tb !important;
+    padding: 5px 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: auto !important; /* Quan trọng: để nó không dãn chiều cao */
 }
 
-.pw-refine-btn-text {
-    white-space: nowrap !important; /* Cấm bẻ dòng */
+.pw-refine-toolbar .pw-refine-btn-text {
     writing-mode: horizontal-tb !important;
+    white-space: nowrap !important;
+    transform: none !important;
+    display: block !important;
+}
+
+/* Loại bỏ thuộc tính gây dãn khung */
+.pw-refine-toolbar {
+    align-items: stretch !important; /* Giữ nguyên hoặc thử đổi thành flex-start nếu vẫn lỗi */
 }
