@@ -1,0 +1,12 @@
+
+{
+    "display_name": "Persona Weaver (Trình tạo thiết lập User)",
+    "name": "st-persona-weaver",
+    "version": "3.4.6",
+    "author": "Yellows & AI",
+    "description": "AI hỗ trợ tạo và tinh chỉnh thiết lập User/NPC",
+    "js": "index.js",
+    "css": "style.css",
+    "type": "extension",
+    "notes": "Cập nhật v3.4.6:\n1. Hỗ trợ đầu ra dạng luồng (stream) cho API độc lập và API chính\n2. Khắc phục lỗi một số mục bị trống khi sử dụng suy luận từ cốt truyện\n3. Khắc phục lỗi các trường không liên quan bị xóa hoặc bị thay thế bằng trình giữ chỗ (placeholder) khi chỉ tinh chỉnh đơn thuần"
+}
