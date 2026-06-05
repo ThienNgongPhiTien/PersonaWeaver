@@ -750,27 +750,29 @@
     .pw-mode-item { padding: 5px 14px; font-size: 0.85em; }
     .pw-section-label { font-size: 1em; }
 }
-    /* Ép buộc nút Tinh chỉnh nằm ngang và không dãn khung */
-.pw-refine-toolbar .pw-refine-btn-vertical {
-    width: auto !important;
-    min-width: 80px !important; /* Đủ rộng cho chữ Tinh chỉnh */
+    /* Tác động mạnh vào thanh công cụ và nút để ép nằm ngang */
+.pw-refine-toolbar {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+}
+
+.pw-refine-btn-vertical {
+    width: 100px !important; /* Ép rộng ra để không bị tràn */
+    min-width: 80px !important;
+    height: auto !important;
     flex-direction: row !important;
     writing-mode: horizontal-tb !important;
-    padding: 5px 10px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    height: auto !important; /* Quan trọng: để nó không dãn chiều cao */
+    padding: 5px 10px !important;
+    transform: none !important;
 }
 
-.pw-refine-toolbar .pw-refine-btn-text {
+.pw-refine-btn-text {
     writing-mode: horizontal-tb !important;
-    white-space: nowrap !important;
     transform: none !important;
     display: block !important;
-}
-
-/* Loại bỏ thuộc tính gây dãn khung */
-.pw-refine-toolbar {
-    align-items: stretch !important; /* Giữ nguyên hoặc thử đổi thành flex-start nếu vẫn lỗi */
+    white-space: nowrap !important;
 }
