@@ -1073,27 +1073,29 @@
 .pw-refine-toolbar {
     display: flex !important;
     flex-direction: row !important;
-    align-items: stretch !important; /* QUAN TRỌNG: Ép các con kéo dài bằng nhau */
-    padding: 0 !important; 
+    align-items: stretch !important; /* Ép mọi thứ trong thanh công cụ phải cao bằng nhau */
+    height: auto !important;
     margin: 0 !important;
+    padding: 0 !important;
 }
 
 .pw-refine-btn-vertical {
-    height: auto !important; /* Không cố định chiều cao nữa */
-    align-self: stretch !important; /* Kéo giãn bản thân theo khung cha */
-    flex-direction: row !important;
-    writing-mode: horizontal-tb !important;
+    align-self: stretch !important; /* Ép nút kéo dài bằng chiều cao của thanh công cụ */
+    height: auto !important; 
+    flex-shrink: 0 !important;
     display: flex !important;
-    align-items: center !important;
+    align-items: center !important; /* Căn giữa icon và chữ theo chiều dọc */
     justify-content: center !important;
-    padding: 0 15px !important; /* Tăng padding để nút nhìn cân đối */
+    padding: 0 15px !important;
+    border-radius: 0 6px 6px 0 !important; /* Bo góc phải */
+    writing-mode: horizontal-tb !important;
+    transform: none !important;
     margin: 0 !important;
-    border-radius: 0 6px 6px 0 !important; /* Bo góc để khớp với khung */
 }
 
 .pw-refine-btn-text {
     writing-mode: horizontal-tb !important;
-    transform: none !important;
     display: block !important;
     white-space: nowrap !important;
+    transform: none !important;
 }
