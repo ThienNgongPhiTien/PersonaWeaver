@@ -146,7 +146,7 @@ const defaultTemplateGenPrompt =
 {{userRequirements}}
 
 <requirements>
-1. Language: **Vietnamese (Tiếng Việt)** keys.
+1. Language: **Vietnamese (Tiếng Việt)** keys. Use natural spaces (e.g. "Thông tin cơ bản"). STRICTLY DO NOT use underscores or snake_case ("_").
 2. Structure: YAML keys only. Leave values empty.
 3. **World Consistency**: The fields MUST reflect the specific logic of the provided World Setting.
    - If the world is Xianxia, include keys like "Căn cốt", "Cảnh giới", "Linh căn".
@@ -175,7 +175,7 @@ const defaultNpcTemplateGenPrompt =
 {{userRequirements}}
 
 <requirements>
-1. Language: **Vietnamese (Tiếng Việt)** keys.
+1. Language: **Vietnamese (Tiếng Việt)** keys. Use natural spaces (e.g. "Đặc điểm ngoại hình"). STRICTLY DO NOT use underscores or snake_case ("_").
 2. Structure: YAML keys only. Leave values empty.
 3. **World Consistency**: The fields MUST reflect the specific logic of the provided World Setting.
    - If the world is Xianxia, include keys like "Căn cốt", "Cảnh giới", "Tông môn".
@@ -662,7 +662,7 @@ function parseYamlToBlocks(text) {
     try {
         const cleanText = text.replace(/^```[a-z]*\n?/im, '').replace(/```$/im, '').trim();
         let lines = cleanText.split('\n');
-        const topLevelKeyRegex = /^\s*([^:\s\-]+?)\s*[:：]/;
+        const topLevelKeyRegex = /^\s*([^:：\n]+?)\s*[:：]/;
         let topKeysIndices = [];
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
